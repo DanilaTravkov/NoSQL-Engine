@@ -1,8 +1,8 @@
-package utils
+package main
 
 import (
 	"encoding/binary"
-	"golang.org/x/crypto/blake2b"
+	"hash/fnv"
 	"time"
 )
 
@@ -10,12 +10,11 @@ type HashWithSeed struct {
 	Seed []byte
 }
 
-func (h HashWithSeed) Hash(data []byte) uint64 {
-	hash, _ := blake2b.New512(h.Seed)
-	//hash.Write(append(data, h.Seed...)) ne treba ako unosimo Seed gore
-	hash.Write(data)
+func (h HashWithSeed) Hash(data string) uint32 {
+	hash := fnv.New32a()
+	hash.Write(append([]byte(data), h.Seed...))
 	sum := hash.Sum(nil)
-	return binary.BigEndian.Uint64(sum)
+	return binary.BigEndian.Uint32(sum)
 }
 
 func CreateHashFunctions(k uint) []HashWithSeed {
@@ -32,7 +31,7 @@ func CreateHashFunctions(k uint) []HashWithSeed {
 
 //func main() { // example of usage
 //	hashFunctions := CreateHashFunctions(10)
-//	data := []byte("test-string")
+//	data := "test-string"
 //
 //	for _, hfn := range hashFunctions {
 //		fmt.Println(hfn.Hash(data)) // import fmt**
