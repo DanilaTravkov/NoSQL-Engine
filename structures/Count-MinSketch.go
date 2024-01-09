@@ -18,7 +18,7 @@ func CreateCountMinSketch(e float64, d float64) *CountMinSketch {
 	cms := CountMinSketch{}
 
 	cms.m = CalculateM(e)
-	cms.k = CalculateM(d)
+	cms.k = CalculateK(d)
 	cms.hashFunctions, cms.ts = utils.CreateHashFunctions(cms.k)
 	cms.T = setT(cms.k, cms.m)
 
