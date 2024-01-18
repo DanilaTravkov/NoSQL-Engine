@@ -1,4 +1,4 @@
-package SkipList
+package structures
 
 import (
 	"fmt"
@@ -42,7 +42,6 @@ func createNode(key string, val []byte, height int, timestamp int64) *SkipListNo
 	}
 }
 
-
 func (node *SkipListNode) GetTombstone() bool {
 	return node.tombstone
 }
@@ -64,7 +63,7 @@ func (s *SkipList) roll() int {
 	for rand.Int31n(2) == 1 {
 		level++
 		if level == s.maxHeight {
-			
+
 			s.height = level
 			return level
 		}
