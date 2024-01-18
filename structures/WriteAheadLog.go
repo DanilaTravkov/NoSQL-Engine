@@ -49,7 +49,7 @@ func (wal *WAL) GetLMW() uint8 {
 }
 
 func CreateWAL(segmensSize, lwm uint8) *WAL {
-	files, _ := ioutil.ReadDir("data/write_ahead_log/segments/")
+	files, _ := ioutil.ReadDir("data/ds/write_ahead_log/segments/")
 	maxName := 0
 	for _, f := range files {
 		str := f.Name()
@@ -65,9 +65,9 @@ func CreateWAL(segmensSize, lwm uint8) *WAL {
 	wal.lwm = lwm
 	wal.mainMap = make(map[string][]byte)
 	if maxName != 0 {
-		wal.file, _ = os.OpenFile("data/write_ahead_log/segments/wal_"+strconv.Itoa(maxName)+".bin", os.O_RDWR, 0777)
+		wal.file, _ = os.OpenFile("data/ds/write_ahead_log/segments/wal_"+strconv.Itoa(maxName)+".bin", os.O_RDWR, 0777)
 	} else {
-		wal.file, _ = os.Create("data/write_ahead_log/segments/wal_1.bin")
+		wal.file, _ = os.Create("data/ds/write_ahead_log/segments/wal_1.bin")
 	}
 
 	return &wal
@@ -120,7 +120,7 @@ func (w *WAL) AddElement(key string, value []byte) bool {
 		if err != nil {
 			return false
 		}
-		w.file, err = os.Create("data/write_ahead_log/segments/wal_" + strconv.Itoa(num+1) + ".bin")
+		w.file, err = os.Create("data/ds/write_ahead_log/segments/wal_" + strconv.Itoa(num+1) + ".bin")
 		if err != nil {
 			return false
 		}
@@ -203,7 +203,7 @@ func (w *WAL) DeleteElement(key string, value []byte) bool {
 		if err != nil {
 			return false
 		}
-		w.file, _ = os.Create("data/write_ahead_log/segments/wal_" + strconv.Itoa(num+1) + ".bin")
+		w.file, _ = os.Create("data/ds/write_ahead_log/segments/wal_" + strconv.Itoa(num+1) + ".bin")
 	}
 
 	delete(w.mainMap, key)
@@ -213,15 +213,15 @@ func (w *WAL) DeleteElement(key string, value []byte) bool {
 
 func (w *WAL) DeleteSegments() {
 	for i := 1; uint8(i) < w.lwm; i++ {
-		err := os.Remove("data/write_ahead_log/segments/wal_" + strconv.Itoa(i) + ".bin")
+		err := os.Remove("data/ds/write_ahead_log/segments/wal_" + strconv.Itoa(i) + ".bin")
 		if err != nil {
 			panic(err)
 		}
 	}
-	other, _ := ioutil.ReadDir("data/wal/segments")
+	other, _ := ioutil.ReadDir("data/ds/wal/segments")
 	for j, f := range other {
 		str := f.Name()
-		err := os.Rename("data/write_ahead_log/segments/"+str, "Data/wal/segments/wal_"+strconv.Itoa(j+1)+".bin")
+		err := os.Rename("data/ds/write_ahead_log/segments/"+str, "data/ds/write_ahead_log/segments/wal_"+strconv.Itoa(j+1)+".bin")
 		if err != nil {
 			panic(err)
 		}
@@ -231,11 +231,11 @@ func (w *WAL) DeleteSegments() {
 func (w *WAL) ResetWAL() *WAL {
 	w.file.Close()
 	w.file.Sync()
-	err := os.RemoveAll("data/write_ahead_log/segments/")
+	err := os.RemoveAll("data/ds/write_ahead_log/segments/")
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("data/write_ahead_log/segments/", 0777)
+	err = os.MkdirAll("data/ds/write_ahead_log/segments/", 0777)
 	if err != nil {
 		panic(err)
 	}
