@@ -49,17 +49,17 @@ func CreateCache(maxSize uint32) *Cache {
 func (cache *Cache) AddElement(key string, value []byte) bool {
 	_, isHere := cache.hashMap[key]
 	if isHere {
-		//premesti na prvi element liste
+		// переместить на первый элемент списка
 		cache.list.setOnFirst(key)
 	} else {
-		//dodaj u listu
+		// добавить в список
 		cache.hashMap[key] = value
 		cache.currentSize++
 		cache.list.addElement(key, value)
 	}
-	// ako je preslo makismum izbaci poslednji
+	// если превышен максимум, удалить последний
 	if cache.currentSize > cache.maxSize {
-		// izbaci poslednji
+		// удалить последний
 		k := cache.getLast().key
 		cache.list.removeLast()
 		cache.currentSize--
@@ -67,6 +67,7 @@ func (cache *Cache) AddElement(key string, value []byte) bool {
 	}
 	return true
 }
+
 
 func (cache *Cache) RemoveElement(key string) bool {
 	_, isHere := cache.hashMap[key]
