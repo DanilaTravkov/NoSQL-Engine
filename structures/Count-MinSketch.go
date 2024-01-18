@@ -1,8 +1,10 @@
 package structures
 
 import (
+	"encoding/gob"
 	"fmt"
 	"math"
+	"os"
 	"projectNASP/utils"
 )
 
@@ -72,6 +74,49 @@ func CalculateK(delta float64) uint {
 	return uint(math.Ceil(math.Log(math.E / delta)))
 }
 
+func (cms CountMinSketch) SerializeCountMinSketch(name string) string {
+	name = "data/ds/cms/usertable-" + name + "-CMS.db"
+	file, err := os.OpenFile(name, os.O_WRONLY|os.O_CREATE, 0777)
+
+	if err != nil {
+		panic(err)
+	}
+
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(cms)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = file.Close()
+
+	if err != nil {
+		panic(err)
+	}
+
+	return name
+}
+
+func DeserializeCountMinSketch(name string) *CountMinSketch {
+	file, err := os.OpenFile(name, os.O_RDWR, 0777)
+
+	if err != nil {
+		panic(err)
+	}
+
+	cms := CountMinSketch{}
+	decoder := gob.NewDecoder(file)
+	err = decoder.Decode(&cms)
+
+	if err != nil {
+		panic(err)
+	}
+
+	cms.hashFunctions, cms.ts = utils.СreateHashFunctionsWithTS(cms.k, cms.ts)
+	file.Close()
+	return &cms
+}
 func main() {
 
 	test := CreateCountMinSketch(0.01, 0.01)

@@ -51,6 +51,20 @@ func CreateHashFunctions(k uint) ([]HashWithSeed, uint) {
 	return h, ts
 }
 
+func СreateHashFunctionsWithTS(k, ts uint) ([]HashWithSeed, uint) {
+	h := make([]HashWithSeed, k)
+	if ts == 0 {
+		ts = uint(time.Now().Unix())
+	}
+	for i := uint(0); i < k; i++ {
+		seed := make([]byte, 32)
+		binary.BigEndian.PutUint32(seed, uint32(ts+i))
+		hfn := NewHashWithSeed(seed)
+		h[i] = hfn
+	}
+	return h, ts
+}
+
 func main() { // example of usage
 	hashFunctions, _ := CreateHashFunctions(10)
 	data := "test-string"
