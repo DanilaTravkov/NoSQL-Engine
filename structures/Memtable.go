@@ -2,7 +2,6 @@ package structures
 
 import (
 	"encoding/binary"
-	"hash/crc32"
 	"io"
 	"io/ioutil"
 	"log"
@@ -37,9 +36,9 @@ func CreateMemtable(data map[string]int, fromYaml bool) *Memtable {
 	memtable.size = uint(memtableSize)
 	memtable.threshold = uint(memtableThreshold)
 	memtable.lsm = [2]int{lsmMaxLevel, lsmMergeThreshold}
-	insideWal := WAL.CreateWAL(uint8(walSegmentSize), uint8(walLWM))
+	insideWal := CreateWAL(uint8(walSegmentSize), uint8(walLWM))
 	memtable.wal = insideWal
-	memtable.skipList = SkipList.CreateSkipList(skiplistMaxHeight, 0, 0)
+	memtable.skipList = CreateSkipList(skiplistMaxHeight, 0, 0)
 	memtable.RecreateWALandSkipList()
 	return &memtable
 }
@@ -358,7 +357,7 @@ func (m *Memtable) Flush() {
 	}
 	file.Close()
 
-	m.skipList = SkipList.CreateSkipList(10, 0, 0)
+	m.skipList = CreateSkipList(10, 0, 0)
 	m.wal = m.wal.ResetWAL()
 
 	if gen+1 == m.lsm[1] {
@@ -366,7 +365,7 @@ func (m *Memtable) Flush() {
 	}
 }
 
-func createSSTable(elements []*SkipList.SkipListNode, gen, lvl int) {
+func createSSTable(elements []*SkipListNode, gen, lvl int) {
 	var offset uint64 = 0
 	var indexOffset uint64 = 0
 	fileData, err1 := os.OpenFile("data/ds/data/usertable-lvl="+strconv.Itoa(lvl)+"-gen="+strconv.Itoa(gen)+"-Data.db", os.O_WRONLY|os.O_CREATE, 0777)
@@ -465,10 +464,6 @@ func createSSTable(elements []*SkipList.SkipListNode, gen, lvl int) {
 	fileData.Close()
 	fileIndex.Close()
 	fileSummary.Close()
-}
-
-func CRC32(data []byte) uint32 {
-	return crc32.ChecksumIEEE(data)
 }
 
 func findCurrentGeneration() int {
