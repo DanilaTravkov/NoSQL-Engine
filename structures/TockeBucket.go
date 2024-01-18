@@ -1,4 +1,4 @@
-package TokenBucket
+package structures
 
 import (
 	"time"
