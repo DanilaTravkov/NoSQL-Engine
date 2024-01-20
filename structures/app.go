@@ -557,7 +557,7 @@ func (app *App) _get(key string) (bool, []byte) {
 							fileData.Read(keyData)
 							value = make([]byte, mm)
 							fileData.Read(value)
-							if Memtable.CRC32(value) != c {
+							if CRC32(value) != c {
 								panic("It won't budge.")
 							}
 							fileSummary.Close()
@@ -603,11 +603,7 @@ func (app *App) _login(username, password string) bool {
 			app.user.Password = password
 			tokensLeft, _ := strconv.Atoi(items[2])
 			lastReset, _ := strconv.Atoi(items[3])
-<<<<<<< HEAD
 			app.user.tokenBucket = CreateTokenBucket(app.data["tokenbucket_size"], app.data["tokenbucket_interval"], tokensLeft, int64(lastReset))
-=======
-			app.user.tokenBucket = TokenBucket.CreateTokenBucket(app.data["tokenbucket_size"], app.data["tokenbucket_interval"], tokensLeft, int64(lastReset))
->>>>>>> origin/main
 			app.tokenBucket = app.user.tokenBucket
 			return true
 		}
