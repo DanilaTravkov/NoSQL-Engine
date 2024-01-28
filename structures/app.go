@@ -64,20 +64,20 @@ func CreateApp() App {
 }
 
 func (app *App) RunApp(amateur bool) {
-	if !amateur {
-		http.HandleFunc("/login/", app.login)
-		http.HandleFunc("/data/ds/", app.users)
-		http.HandleFunc("/", app.index)
+	// if !amateur {
+	// 	http.HandleFunc("/login/", app.login)
+	// 	http.HandleFunc("/data/ds/", app.users)
+	// 	http.HandleFunc("/", app.index)
 
-		port := os.Getenv("PORT")
-		if port == "" {
-			port = "9000"
-		}
-		err := http.ListenAndServe(":"+port, nil)
-		if err != nil {
-			panic(err)
-		}
-	} else {
+	// 	port := os.Getenv("PORT")
+	// 	if port == "" {
+	// 		port = "9000"
+	// 	}
+	// 	err := http.ListenAndServe(":"+port, nil)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// } else {
 		for true {
 			fmt.Print("Choose on option:\n 1) Login \n 2) Register \n 3) Exit \n>> ")
 			var option string
@@ -124,7 +124,6 @@ func (app *App) RunApp(amateur bool) {
 			}
 		}
 	}
-}
 
 func (app *App) options() {
 	for true {
@@ -277,73 +276,73 @@ func (app *App) _putSpecial(key string, value []byte, whichOne string) bool {
 	return false
 }
 
-func (app *App) index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.WriteHeader(http.StatusOK)
-	jsonBytes, err := json.Marshal("")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Header().Add("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
-}
+// func (app *App) index(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+// 	w.Header().Set("Access-Control-Allow-Origin", "*")
+// 	w.WriteHeader(http.StatusOK)
+// 	jsonBytes, err := json.Marshal("")
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		w.Write([]byte(err.Error()))
+// 		return
+// 	}
+// 	w.Header().Add("content-type", "application/json")
+// 	w.WriteHeader(http.StatusOK)
+// 	w.Write(jsonBytes)
+// }
 
-func (app *App) login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if r.Method == "GET" {
-		tokens := strings.Split(r.URL.String(), "/")
-		if len(tokens) != 3 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		info := strings.Split(tokens[2], ",")
-		if len(info) != 2 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		ok := app._login(info[0], info[1])
+// func (app *App) login(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+// 	w.Header().Set("Access-Control-Allow-Origin", "*")
+// 	if r.Method == "GET" {
+// 		tokens := strings.Split(r.URL.String(), "/")
+// 		if len(tokens) != 3 {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		}
+// 		info := strings.Split(tokens[2], ",")
+// 		if len(info) != 2 {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		}
+// 		ok := app._login(info[0], info[1])
 
-		if !ok {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		app.updateUsersFile()
-		return
-	} else {
-		tokens := strings.Split(r.URL.String(), "/")
-		if len(tokens) != 3 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		info := strings.Split(tokens[2], ",")
-		if len(info) != 2 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		if !app._login(info[0], info[1]) {
-			file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_WRONLY, 0777)
-			if err != nil {
-				panic(err)
-			}
-			_, err = file.WriteString(info[0] + "," + info[1] + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
-			if err != nil {
-				panic(err)
-			}
-			file.Close()
-			w.WriteHeader(http.StatusOK)
-			return
-		} else {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-	}
-}
+// 		if !ok {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		}
+// 		w.WriteHeader(http.StatusOK)
+// 		app.updateUsersFile()
+// 		return
+// 	} else {
+// 		tokens := strings.Split(r.URL.String(), "/")
+// 		if len(tokens) != 3 {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		}
+// 		info := strings.Split(tokens[2], ",")
+// 		if len(info) != 2 {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		}
+// 		if !app._login(info[0], info[1]) {
+// 			file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_WRONLY, 0777)
+// 			if err != nil {
+// 				panic(err)
+// 			}
+// 			_, err = file.WriteString(info[0] + "," + info[1] + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
+// 			if err != nil {
+// 				panic(err)
+// 			}
+// 			file.Close()
+// 			w.WriteHeader(http.StatusOK)
+// 			return
+// 		} else {
+// 			w.WriteHeader(http.StatusBadRequest)
+// 			return
+// 		}
+// 	}
+// }
 
 func (app *App) get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
