@@ -3,7 +3,6 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Link } from "react-router-dom"
 
 import {
   Form,
@@ -17,9 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { SignupValidationSchema } from "@/lib/validation"
 
-
 const Login = () => {
-
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof SignupValidationSchema>>({
     resolver: zodResolver(SignupValidationSchema),
@@ -30,10 +27,18 @@ const Login = () => {
   })
 
 	// 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
-    // Do something with the form values.
-    // This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
+    try {
+      const response = await /* TODO define endpoint */ fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values)
+      });
+      return response.json()
+    }
+    catch (error) {
+      console.log(error)
+    }
   }
 
 	return (
@@ -78,7 +83,9 @@ const Login = () => {
             </FormItem>
           )}
         />
-        <Button className="shad-button_dark_4" type="submit">Submit</Button>
+        <Button className="shad-button_dark_4" type="submit">
+          {isLoading ? "...Sending" : "Submit"}
+        </Button>
       </form>
     </Form>
 		</>
