@@ -1,11 +1,11 @@
 package main
 
 import (
-	"dabrovi/structures"
+	"projectDVMVRV/structures"
 )
 
 func main () {
 	app := App.CreateApp()
-	app.RunApp()
+	app.RunWebApp()
 	app.StopApp()
 }
