@@ -34,7 +34,11 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values)
       });
-      return response.json()
+      const data = await response.json()
+      if (!data) {
+        throw new Error("The response did not return any data")
+      }
+      return data
     }
     catch (error) {
       console.log(error)

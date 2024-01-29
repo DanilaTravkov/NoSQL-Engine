@@ -28,9 +28,22 @@ const Home = () => {
   })
 
 	// 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
-    
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
+    try {
+      const response = await /* TODO define endpoint */ fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values)
+      });
+      const data = await response.json()
+      if (!data) {
+        throw new Error("The response did not return any data")
+      }
+      return data
+    }
+    catch (error) {
+      console.log(error)
+    }
   }
 
 	return (
