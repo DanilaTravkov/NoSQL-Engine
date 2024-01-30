@@ -20,6 +20,13 @@ type User struct {
 	tokenBucket *TokenBucket
 }
 
+
+// Remove this in prod
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type App struct {
 	memtable    *Memtable
 	cache       *Cache
@@ -63,21 +70,7 @@ func CreateApp() App {
 	return app
 }
 
-func (app *App) RunApp(amateur bool) {
-	if !amateur {
-		http.HandleFunc("/login/", app.login)
-		http.HandleFunc("/data/ds/", app.users)
-		http.HandleFunc("/", app.index)
-
-		port := os.Getenv("PORT")
-		if port == "" {
-			port = "9000"
-		}
-		err := http.ListenAndServe(":"+port, nil)
-		if err != nil {
-			panic(err)
-		}
-	} else {
+func (app *App) RunApp() {
 		for true {
 			fmt.Print("Choose on option:\n 1) Login \n 2) Register \n 3) Exit \n>> ")
 			var option string
@@ -124,6 +117,20 @@ func (app *App) RunApp(amateur bool) {
 			}
 		}
 	}
+
+func (app *App) RunWebApp() {
+		http.HandleFunc("/login/", app.login)
+		http.HandleFunc("/data/ds/", app.users)
+		http.HandleFunc("/", app.index)
+
+		port := os.Getenv("PORT")
+		if !(port) {
+			port = "8000"
+		}
+		err := http.ListenAndServe(":"+port, nil)
+		if err != nil {
+			panic(err)
+		}
 }
 
 func (app *App) options() {
@@ -281,68 +288,108 @@ func (app *App) index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	jsonBytes, err := json.Marshal("")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Header().Add("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	// jsonBytes, err := json.Marshal("")
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	w.Write([]byte(err.Error()))
+	// 	return
+	// }
+	// w.Header().Add("content-type", "application/json")
+	// w.WriteHeader(http.StatusOK)
+	// w.Write(jsonBytes)
 }
 
 func (app *App) login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if r.Method == "GET" {
-		tokens := strings.Split(r.URL.String(), "/")
-		if len(tokens) != 3 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		info := strings.Split(tokens[2], ",")
-		if len(info) != 2 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		ok := app._login(info[0], info[1])
+	if r.Method == "POST" {
+		decoder := json.NewDecoder(r.Body)
+		var creds Credentials
 
-		if !ok {
-			w.WriteHeader(http.StatusNotFound)
+		err := decoder.Decode(&creds)
+		if err != nil {
+			http.Error(w, "Неправильные данные", http.StatusBadRequest)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
-		app.updateUsersFile()
+		fmt.Printf("Received JSON data: %+v\n", creds)
+
+		// Respond with a JSON message
+		response := map[string]string{"message": "Login successful"}
+		json.NewEncoder(w).Encode(response)
 		return
-	} else {
-		tokens := strings.Split(r.URL.String(), "/")
-		if len(tokens) != 3 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		info := strings.Split(tokens[2], ",")
-		if len(info) != 2 {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		if !app._login(info[0], info[1]) {
-			file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_WRONLY, 0777)
-			if err != nil {
-				panic(err)
-			}
-			_, err = file.WriteString(info[0] + "," + info[1] + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
-			if err != nil {
-				panic(err)
-			}
-			file.Close()
-			w.WriteHeader(http.StatusOK)
-			return
-		} else {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
 	}
+	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	// if r.Method == "GET" {
+	// 	tokens := strings.Split(r.URL.String(), "/")
+	// 	if len(tokens) != 3 {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+	// 	info := strings.Split(tokens[2], ",")
+	// 	if len(info) != 2 {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+	// 	ok := app._login(info[0], info[1])
+
+	// 	if !ok {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+	// 	w.WriteHeader(http.StatusOK)
+	// 	app.updateUsersFile()
+	// 	return
+	// } else {
+	// 	tokens := strings.Split(r.URL.String(), "/")
+	// 	if len(tokens) != 3 {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+	// 	info := strings.Split(tokens[2], ",")
+	// 	if len(info) != 2 {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
+	// 	if !app._login(info[0], info[1]) {
+	// 		file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_WRONLY, 0777)
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 		_, err = file.WriteString(info[0] + "," + info[1] + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 		file.Close()
+	// 		w.WriteHeader(http.StatusOK)
+	// 		return
+	// 	} else {
+	// 		w.WriteHeader(http.StatusBadRequest)
+	// 		return
+	// 	}
+	// }
+}
+
+func (app *App) users(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	// switch r.Method {
+	// case "GET":
+	// 	app.get(w, r)
+	// 	app.updateUsersFile()
+	// 	return
+	// case "POST", "PUT":
+	// 	app.put(w, r)
+	// 	app.updateUsersFile()
+	// 	return
+	// case "OPTIONS":
+	// 	app.delete(w, r)
+	// 	app.updateUsersFile()
+	// 	return
+	// default:
+	// 	return
+	// }
 }
 
 func (app *App) get(w http.ResponseWriter, r *http.Request) {
@@ -405,27 +452,6 @@ func (app *App) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-}
-
-func (app *App) users(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	switch r.Method {
-	case "GET":
-		app.get(w, r)
-		app.updateUsersFile()
-		return
-	case "POST", "PUT":
-		app.put(w, r)
-		app.updateUsersFile()
-		return
-	case "OPTIONS":
-		app.delete(w, r)
-		app.updateUsersFile()
-		return
-	default:
-		return
-	}
 }
 
 func (app *App) _put(key string, value []byte) bool {
