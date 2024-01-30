@@ -2,10 +2,9 @@ package structures
 
 import (
 	"encoding/gob"
-	"fmt"
 	"math"
 	"os"
-	"projectNASP/utils"
+	"projectDVMVRV/utils"
 )
 
 type CountMinSketch struct {
@@ -117,13 +116,14 @@ func DeserializeCountMinSketch(name string) *CountMinSketch {
 	file.Close()
 	return &cms
 }
-func main() {
 
-	test := CreateCountMinSketch(0.01, 0.01)
-	testString := "BlumFilter2.0"
-	test.Addiction(testString)
-
-	minimum := test.SearchMin(testString)
-
-	fmt.Println(minimum)
-}
+//func main() {
+//
+//	test := CreateCountMinSketch(0.01, 0.01)
+//	testString := "BlumFilter2.0"
+//	test.Addiction(testString)
+//
+//	minimum := test.SearchMin(testString)
+//
+//	fmt.Println(minimum)
+//}

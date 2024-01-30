@@ -228,12 +228,12 @@ func (skip *SkipList) LastLevel() []*SkipListNode {
 	return res
 }
 
-func main() {
-	sl := CreateSkipList(5, 0, 1)
-	sl.AddElement("keyN1", []byte("lol"))
-	node := sl.FindElement("keyN1")
-	fmt.Printf(string(node.value))
-	sl.RemoveElement("keyN1")
-	sl.RemoveElement("key2")
-	fmt.Printf(string(node.value))
-}
+//func main() {
+//	sl := CreateSkipList(5, 0, 1)
+//	sl.AddElement("keyN1", []byte("lol"))
+//	node := sl.FindElement("keyN1")
+//	fmt.Printf(string(node.value))
+//	sl.RemoveElement("keyN1")
+//	sl.RemoveElement("key2")
+//	fmt.Printf(string(node.value))
+//}

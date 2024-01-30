@@ -4,8 +4,8 @@ import (
 	"projectDVMVRV/structures"
 )
 
-func main () {
-	app := App.CreateApp()
+func main() {
+	app := structures.CreateApp()
 	app.RunWebApp()
 	app.StopApp()
 }

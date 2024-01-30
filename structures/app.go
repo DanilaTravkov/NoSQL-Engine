@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -19,7 +20,6 @@ type User struct {
 	Password    string `json:"password"`
 	tokenBucket *TokenBucket
 }
-
 
 // Remove this in prod
 type Credentials struct {
@@ -71,66 +71,66 @@ func CreateApp() App {
 }
 
 func (app *App) RunApp() {
-		for true {
-			fmt.Print("Choose on option:\n 1) Login \n 2) Register \n 3) Exit \n>> ")
-			var option string
-			fmt.Scanln(&option)
-			if strings.Replace(option, ")", "", 1) == "1" {
-				fmt.Print("Enter the username\n >> ")
-				var username string
-				fmt.Scanln(&username)
+	for true {
+		fmt.Print("Choose on option:\n 1) Login \n 2) Register \n 3) Exit \n>> ")
+		var option string
+		fmt.Scanln(&option)
+		if strings.Replace(option, ")", "", 1) == "1" {
+			fmt.Print("Enter the username\n >> ")
+			var username string
+			fmt.Scanln(&username)
 
-				fmt.Print("Enter the password\n >> ")
-				var password string
-				fmt.Scanln(&password)
+			fmt.Print("Enter the password\n >> ")
+			var password string
+			fmt.Scanln(&password)
 
-				if app._login(username, password) {
-					app.options()
-				}
-			} else if strings.Replace(option, ")", "", 1) == "2" {
-				fmt.Print("Enter the username\n >> ")
-				var username string
-				fmt.Scanln(&username)
-
-				fmt.Print("Enter the password\n >> ")
-				var password string
-				fmt.Scanln(&password)
-
-				if !app._login(username, password) {
-					file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_CREATE, 0777)
-					if err != nil {
-						panic(err)
-					}
-
-					_, err = file.WriteString(username + "," + password + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
-					if err != nil {
-						panic(err)
-					}
-					file.Close()
-				} else {
-					fmt.Println("\nError: this valuse is not unique\n")
-				}
-			} else if strings.Replace(option, ")", "", 1) == "3" {
-				break
-			} else {
-				fmt.Println("\nError: you don't have this option. Try again\n")
+			if app._login(username, password) {
+				app.options()
 			}
+		} else if strings.Replace(option, ")", "", 1) == "2" {
+			fmt.Print("Enter the username\n >> ")
+			var username string
+			fmt.Scanln(&username)
+
+			fmt.Print("Enter the password\n >> ")
+			var password string
+			fmt.Scanln(&password)
+
+			if !app._login(username, password) {
+				file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_CREATE, 0777)
+				if err != nil {
+					panic(err)
+				}
+
+				_, err = file.WriteString(username + "," + password + "," + strconv.Itoa(app.data["tokenbucket_size"]) + "," + strconv.Itoa(int(time.Now().Unix())) + "\n")
+				if err != nil {
+					panic(err)
+				}
+				file.Close()
+			} else {
+				fmt.Println("\nError: this valuse is not unique\n")
+			}
+		} else if strings.Replace(option, ")", "", 1) == "3" {
+			break
+		} else {
+			fmt.Println("\nError: you don't have this option. Try again\n")
 		}
 	}
+}
 
 func (app *App) RunWebApp() {
-		http.HandleFunc("/login/", app.login)
-		http.HandleFunc("/data/ds/", app.users)
-		http.HandleFunc("/", app.index)
+	http.HandleFunc("/login/", app.login)
+	http.HandleFunc("/data/ds/", app.users)
+	http.HandleFunc("/", app.index)
 
-		port := os.Getenv("PORT")
-		if !(port) {
-			port = "8000"
-		}
-		err := http.ListenAndServe(":"+port, nil)
-		if err != nil {
-			panic(err)
-		}
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (app *App) options() {

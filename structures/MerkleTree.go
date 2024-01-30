@@ -3,7 +3,6 @@ package structures
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -160,23 +159,23 @@ func Reconstruct(gen, lvl int) MerkleTree {
 	return newMerkleTree
 }
 
-func main() {
-
-	Tree := MerkleTree{}
-	Tree.AddElement([]byte("test1"))
-	Tree.AddElement([]byte("test2"))
-	Tree.AddElement([]byte("test3"))
-	Tree.AddElement([]byte("test4"))
-	Tree.AddElement([]byte("test5"))
-
-	Tree.CreateTree()
-
-	fmt.Println(Tree)
-
-	Tree.Serialize(1, 1)
-
-	Tree = Reconstruct(1, 1)
-
-	fmt.Println(Tree)
-
-}
+//func main() {
+//
+//	Tree := MerkleTree{}
+//	Tree.AddElement([]byte("test1"))
+//	Tree.AddElement([]byte("test2"))
+//	Tree.AddElement([]byte("test3"))
+//	Tree.AddElement([]byte("test4"))
+//	Tree.AddElement([]byte("test5"))
+//
+//	Tree.CreateTree()
+//
+//	fmt.Println(Tree)
+//
+//	Tree.Serialize(1, 1)
+//
+//	Tree = Reconstruct(1, 1)
+//
+//	fmt.Println(Tree)
+//
+//}

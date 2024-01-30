@@ -3,7 +3,6 @@ package structures
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -102,15 +101,15 @@ func Distance(h1, h2 SimHash) int {
 	return distance
 }
 
-func main() {
-
-	h1 := SimHash{text: "Hello, my name is Alberto"}
-	h1.FingerprintInitialization()
-
-	h2 := SimHash{text: "Hello, my name is Antonio"}
-	h2.FingerprintInitialization()
-
-	d := Distance(h1, h2)
-
-	fmt.Println("Distance ", d)
-}
+//func main() {
+//
+//	h1 := SimHash{text: "Hello, my name is Alberto"}
+//	h1.FingerprintInitialization()
+//
+//	h2 := SimHash{text: "Hello, my name is Antonio"}
+//	h2.FingerprintInitialization()
+//
+//	d := Distance(h1, h2)
+//
+//	fmt.Println("Distance ", d)
+//}
