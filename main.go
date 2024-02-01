@@ -6,6 +6,6 @@ import (
 
 func main() {
 	app := structures.CreateApp()
-	app.RunWebApp()
+	app.RunApp()
 	app.StopApp()
 }

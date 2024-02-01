@@ -39,7 +39,7 @@ func (cms *CountMinSketch) Addiction(element string) {
 	for i := 0; i < int(cms.k); i++ {
 		cms.hashFunctions[i].Reset()
 		cms.hashFunctions[i].Write([]byte(element))
-		j := cms.hashFunctions[i].Sum32() % uint32(cms.m) // % uint32(cms.m) to fit into the table
+		j := cms.hashFunctions[i].Sum32() % uint32(cms.m) // % uint32(cms.M) to fit into the table
 
 		cms.T[i][j]++
 	}
