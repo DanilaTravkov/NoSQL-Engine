@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 type User struct {
@@ -97,7 +98,7 @@ func (app *App) RunApp() {
 			fmt.Scanln(&password)
 
 			if !app._login(username, password) {
-				file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_CREATE, 0777)
+				file, err := os.OpenFile("data/ds/users/users.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0777)
 				if err != nil {
 					panic(err)
 				}
