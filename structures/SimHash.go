@@ -1,9 +1,8 @@
 package structures
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -37,7 +36,7 @@ func (shash *SimHash) FingerprintInitialization() {
 	i := 0
 	for word, _ := range shash.words {
 
-		s := GetBinaryString(GetSHA256Hash(word))
+		s := GetBinaryString(GetMD5Hash(word))
 
 		for j := 0; j < len(s); j++ {
 			if string(s[j]) == "0" {
@@ -84,10 +83,9 @@ func GetBinaryString(s string) string {
 	return string(res)
 }
 
-func GetSHA256Hash(input string) string {
-	hasher := sha256.New()
-	hasher.Write([]byte(input))
-	return hex.EncodeToString(hasher.Sum(nil))
+func GetMD5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
 }
 
 func Distance(h1, h2 SimHash) int {
@@ -102,15 +100,15 @@ func Distance(h1, h2 SimHash) int {
 	return distance
 }
 
-func main() {
-
-	h1 := SimHash{text: "Hello, my name is Alberto"}
-	h1.FingerprintInitialization()
-
-	h2 := SimHash{text: "Hello, my name is Antonio"}
-	h2.FingerprintInitialization()
-
-	d := Distance(h1, h2)
-
-	fmt.Println("Distance ", d)
-}
+//func main() {
+//
+//	h1 := SimHash{text: "Hello, my name is Alberto"}
+//	h1.FingerprintInitialization()
+//
+//	h2 := SimHash{text: "Hello, my name is Antonio"}
+//	h2.FingerprintInitialization()
+//
+//	d := Distance(h1, h2)
+//
+//	fmt.Println("Distance ", d)
+//}

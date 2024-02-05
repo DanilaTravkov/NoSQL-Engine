@@ -84,7 +84,7 @@ func (m *Memtable) RecreateWALandSkipList() {
 			file.Read(value)
 
 			if CRC32(value) != c {
-				panic("Nece da oce")
+				panic("Error")
 			}
 			errNew, isNew := m.skipList.UpdateTimestamp(string(key), value, int64(walTimestamp), whatToDo[0])
 			if isNew {
@@ -151,7 +151,7 @@ func (m *Memtable) Get(key string) (bool, bool, []byte) {
 		}
 
 	}
-	return false, false, []byte("Nema nista")
+	return false, false, []byte("Nothing")
 }
 
 func (m *Memtable) Compactions(whatLvl int) {
@@ -519,7 +519,7 @@ func removeOldFiles(whatLvl, current int) {
 	if e != nil {
 		log.Fatal(e)
 	}
-	e = os.Remove("data/ds/data/ds/usertable-lvl=" + strconv.Itoa(whatLvl) + "-gen=" + strconv.Itoa(current) + "-Data.db")
+	e = os.Remove("data/ds/data/usertable-lvl=" + strconv.Itoa(whatLvl) + "-gen=" + strconv.Itoa(current) + "-Data.db")
 	if e != nil {
 		log.Fatal(e)
 	}

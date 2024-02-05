@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/bits"
 	"os"
-	"projectNASP/utils"
+	"projectDVMVRV/utils"
 )
 
 const (
@@ -14,20 +14,20 @@ const (
 )
 
 type HLL struct {
-	p     uint8
-	m     uint32
-	reg   []uint8
-	ts    uint
+	P     uint8
+	M     uint32
+	Reg   []uint8
+	Ts    uint
 	hashF utils.HashWithSeed
 }
 
 func CreateHLL(p uint8) *HLL {
-	hll := HLL{p: p}
+	hll := HLL{P: p}
 
-	hll.m, hll.reg = createBuckets(hll.p)
+	hll.M, hll.Reg = createBuckets(hll.P)
 	hash, ts := utils.CreateHashFunctions(1)
 	hll.hashF = hash[0]
-	hll.ts = ts
+	hll.Ts = ts
 
 	return &hll
 }
@@ -37,9 +37,9 @@ func (hll *HLL) Add(key string) {
 	hll.hashF.Write([]byte(key))
 	i := hll.hashF.Sum32()
 	n := bits.TrailingZeros32(i)
-	i = i >> (32 - hll.p)
+	i = i >> (32 - hll.P)
 
-	hll.reg[i] = uint8(n)
+	hll.Reg[i] = uint8(n)
 
 }
 
@@ -51,7 +51,7 @@ func createBuckets(p uint8) (uint32, []uint8) {
 
 func (hll *HLL) emptyCount() int {
 	sum := 0
-	for _, val := range hll.reg {
+	for _, val := range hll.Reg {
 		if val == 0 {
 			sum++
 		}
@@ -61,16 +61,16 @@ func (hll *HLL) emptyCount() int {
 
 func (hll *HLL) Estimate() float64 {
 	sum := 0.0
-	for _, val := range hll.reg {
+	for _, val := range hll.Reg {
 		sum = sum + math.Pow(float64(-val), 2.0)
 	}
 
-	alpha := 0.7213 / (1.0 + 1.079/float64(hll.m))
-	estimation := alpha * math.Pow(float64(hll.m), 2.0) / sum
+	alpha := 0.7213 / (1.0 + 1.079/float64(hll.M))
+	estimation := alpha * math.Pow(float64(hll.M), 2.0) / sum
 	emptyRegs := hll.emptyCount()
-	if estimation < 2.5*float64(hll.m) {
+	if estimation < 2.5*float64(hll.M) {
 		if emptyRegs > 0 {
-			estimation = float64(hll.m) * math.Log(float64(hll.m)/float64(emptyRegs))
+			estimation = float64(hll.M) * math.Log(float64(hll.M)/float64(emptyRegs))
 		}
 	} else if estimation > math.Pow(2.0, 32.0)/30.0 {
 		estimation = -math.Pow(2.0, 32.0) * math.Log(1.0-estimation/math.Pow(2.0, 32.0))

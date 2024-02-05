@@ -68,7 +68,6 @@ func (cache *Cache) AddElement(key string, value []byte) bool {
 	return true
 }
 
-
 func (cache *Cache) RemoveElement(key string) bool {
 	_, isHere := cache.hashMap[key]
 	if isHere {
@@ -181,24 +180,24 @@ func (dll *DoublyLinkedList) removeElement(key string) {
 	dll.removeLast()
 }
 
-func main() {
-	cache := CreateCache(5)
-	cache.AddElement("1", []byte("Test"))
-	cache.AddElement("2", []byte("Test"))
-	cache.AddElement("3", []byte("Test"))
-	cache.AddElement("4", []byte("Test"))
-	cache.AddElement("5", []byte("KKKKK"))
-	cache.printCache()
-	cache.AddElement("6", []byte("Test"))
-	cache.printCache()
-	cache.AddElement("3", []byte("Test"))
-	cache.printCache()
-	fmt.Println(cache.GetElement("5"))
-	cache.printCache()
-	cache.RemoveElement("40")
-	cache.RemoveElement("4")
-	cache.RemoveElement("3")
-	cache.AddElement("1", []byte("Test"))
-	cache.AddElement("6", []byte("Test"))
-	cache.printCache()
-}
+//func main() {
+//	cache := CreateCache(5)
+//	cache.AddElement("1", []byte("Test"))
+//	cache.AddElement("2", []byte("Test"))
+//	cache.AddElement("3", []byte("Test"))
+//	cache.AddElement("4", []byte("Test"))
+//	cache.AddElement("5", []byte("KKKKK"))
+//	cache.printCache()
+//	cache.AddElement("6", []byte("Test"))
+//	cache.printCache()
+//	cache.AddElement("3", []byte("Test"))
+//	cache.printCache()
+//	fmt.Println(cache.GetElement("5"))
+//	cache.printCache()
+//	cache.RemoveElement("40")
+//	cache.RemoveElement("4")
+//	cache.RemoveElement("3")
+//	cache.AddElement("1", []byte("Test"))
+//	cache.AddElement("6", []byte("Test"))
+//	cache.printCache()
+//}
