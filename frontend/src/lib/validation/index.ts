@@ -5,3 +5,7 @@ export const SignupValidationSchema = z.object({
 	password: z.string().min(8, { message: "Password must be at least 8 characters"})
 })
 
+export const engineValidationSchema = z.object({
+	key: z.string().min(1, {message: "Cannot be empty"}),
+})
+

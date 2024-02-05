@@ -7,7 +7,7 @@ import Home from './pages/Home';
 function App() {
   return (
     <Router>
-      <main className='h-screen flex bg-yellow-200'>
+      <main className='h-screen flex bg-green-600'>
         <Routes>
           {/* auth routes */}
           <Route element={<AuthLayout/>}>

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
+import { useState } from 'react'
+
 import {
   Form,
   FormControl,
@@ -17,6 +19,11 @@ import { Input } from "@/components/ui/input"
 import { SignupValidationSchema } from "@/lib/validation"
 
 const Login = () => {
+
+  const endpoint = "http://localhost:8000/login"
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof SignupValidationSchema>>({
     resolver: zodResolver(SignupValidationSchema),
@@ -27,22 +34,8 @@ const Login = () => {
   })
 
 	// 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
-    try {
-      const response = await /* TODO define endpoint */ fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values)
-      });
-      const data = await response.json()
-      if (!data) {
-        throw new Error("The response did not return any data")
-      }
-      return data
-    }
-    catch (error) {
-      console.log(error)
-    }
+  async function onSubmit(values: z.infer<typeof engineValidationSchema>) {
+    
   }
 
 	return (
@@ -50,7 +43,7 @@ const Login = () => {
 			<Form {...form}>
 			<div className="sm:w-420 flex-center flex-col">
 
-				<h2 className="text-black h3-bold md:h4-bold pb-5 sm:pb-7 md:pb-12 text-4xl">Log in to use the engine</h2>
+				<h2 className="h3-bold md:h4-bold pb-5 sm:pb-7 md:pb-12 text-4xl">Log in to use the engine</h2>
 
 			</div>
 
@@ -60,7 +53,7 @@ const Login = () => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black">Login</FormLabel>
+              <FormLabel>Login</FormLabel>
               <FormControl>
                 <Input className="text-black" placeholder="Enter your email" {...field} />
               </FormControl>
@@ -76,7 +69,7 @@ const Login = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black">Password</FormLabel>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input className="text-black" type="password" placeholder="Enter your password" {...field} />
               </FormControl>
